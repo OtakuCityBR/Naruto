@@ -106,13 +106,18 @@
     </div>
     
     <div class="buttons">
-    <a href="https://otakucitybr.github.io/catalogo/" class="btn" target="_self">Voltar</a>
-    <button id="whatsapp-btn" class="btn btn-whatsapp">Quero Esta</button>
-</div>
-    
-    <div class="preload">
-        <!-- Imagens serão pré-carregadas aqui -->
+        <a href="https://otakucitybr.github.io/catalogo/" class="btn" id="voltar-btn" target="_self">Voltar</a>
+        <button id="whatsapp-btn" class="btn btn-whatsapp">Quero Esta</button>
     </div>
+
+    <script>
+        // Garantir que o link funciona
+        document.getElementById('voltar-btn').addEventListener('click', function(e) {
+            window.location.href = this.href;
+            e.preventDefault(); // Só para teste, remova depois
+            console.log('Redirecionando para:', this.href);
+        });
+    </script>
 
     <script>
         // Lista de imagens
