@@ -304,6 +304,10 @@
                 preloadNextImages();
             };
             
+            document.querySelector('a[href="https://otakucitybr.github.io/catalogo/"]').addEventListener('click', function(e) {
+            window.location.href = this.href;
+            });
+            
             // Navegação por teclado (para teste em desktop)
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'ArrowUp') {
