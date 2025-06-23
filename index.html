@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Catálogo de Placas Decorativas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: pan-y;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+        
+        .slider-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .slider-track {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s ease-out;
+        }
+        
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .slide img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .buttons {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            z-index: 101;
+        }
+        
+        .btn-whatsapp {
+            background-color: #25D366;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            z-index: 1000;
+        }
+        
+        .preload {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">Carregando...</div>
+    
+    <div class="slider-container">
+        <div class="slider-track" id="slider-track">
+            <!-- Slides serão adicionados dinamicamente -->
+        </div>
+    </div>
+    
+    <div class="buttons">
+        <a href="index.html" class="btn">Voltar</a>
+        <button id="whatsapp-btn" class="btn btn-whatsapp">Quero Esta</button>
+    </div>
+    
+    <div class="preload">
+        <!-- Imagens serão pré-carregadas aqui -->
+    </div>
+
+    <script>
+        // Lista de imagens
+        const images = [
+            "https://i.ibb.co/1t45yDPY/Naruto-0060-N-61.jpg",
+            "https://i.ibb.co/SwT8z8sR/N-1.jpg",
+            "https://i.ibb.co/5gg1DfPG/N-2.jpg",
+            "https://i.ibb.co/NgqVfpLx/N-3.jpg",
+            "https://i.ibb.co/k63qg0b7/N-4.jpg",
+            "https://i.ibb.co/8DL9gtrq/N-5.jpg",
+            "https://i.ibb.co/15zJjxL/N-6.jpg",
+            "https://i.ibb.co/dsDn4k8c/N-7.jpg",
+            "https://i.ibb.co/Lhp5RfYP/N-8.jpg",
+            "https://i.ibb.co/wZ6yhkXw/N-9.jpg",
+            "https://i.ibb.co/5XJ3NhHp/N-10.jpg",
+            "https://i.ibb.co/SD8z2cY0/N-11.jpg",
+            "https://i.ibb.co/bTqkQsX/N-12.jpg",
+            "https://i.ibb.co/B53znPZG/N-13.jpg",
+            "https://i.ibb.co/TBqJCLkb/N-14.jpg",
+            "https://i.ibb.co/RkCJ7ZJy/N-15.jpg",
+            "https://i.ibb.co/KxV0GrJd/N-16.jpg",
+            "https://i.ibb.co/KcXxQPQ2/N-17.jpg",
+            "https://i.ibb.co/F4PrkNfG/N-18.jpg",
+            "https://i.ibb.co/zhgbBR7j/N-19.jpg",
+            "https://i.ibb.co/7tyRhHJb/N-20.jpg",
+            "https://i.ibb.co/YBXjCgJj/N-21.jpg",
+            "https://i.ibb.co/RTzWg5ZN/N-22.jpg",
+            "https://i.ibb.co/MkYx2RSz/N-23.jpg",
+            "https://i.ibb.co/5pcBrH4/N-24.jpg",
+            "https://i.ibb.co/BHgPrwmm/N-25.jpg",
+            "https://i.ibb.co/tTgfW4tH/N-26.jpg",
+            "https://i.ibb.co/hRkmGVm7/N-27.jpg",
+            "https://i.ibb.co/TxJMZf0r/N-28.jpg",
+            "https://i.ibb.co/kVBYthtc/N-29.jpg",
+            "https://i.ibb.co/83SJ1y1/N-30.jpg",
+            "https://i.ibb.co/HLFP63tm/N-31.jpg",
+            "https://i.ibb.co/SwKY5TSy/N-32.jpg",
+            "https://i.ibb.co/YBQqTwfY/N-33.jpg",
+            "https://i.ibb.co/9HVHhcZK/N-34.jpg",
+            "https://i.ibb.co/ZR3pwVx5/N-35.jpg",
+            "https://i.ibb.co/bgBbvTSd/N-36.jpg",
+            "https://i.ibb.co/vvYzpmsL/N-37.jpg",
+            "https://i.ibb.co/wrS6Pn2C/N-38.jpg",
+            "https://i.ibb.co/93Wrz3zQ/N-39.jpg",
+            "https://i.ibb.co/ynFZFnqy/N-40.jpg",
+            "https://i.ibb.co/ymdYG2Vg/N-41.jpg",
+            "https://i.ibb.co/JjfHK6Y6/N-42.jpg",
+            "https://i.ibb.co/RTYznpLV/N-43.jpg",
+            "https://i.ibb.co/fGzMNC96/N-44.jpg",
+            "https://i.ibb.co/B2ZzZ2Y4/N-45.jpg",
+            "https://i.ibb.co/6J1hqHtr/N-46.jpg",
+            "https://i.ibb.co/mF0Rvhxw/N-47.jpg",
+            "https://i.ibb.co/27TvwFnL/N-48.jpg",
+            "https://i.ibb.co/Fk9b4TLg/N-49.jpg",
+            "https://i.ibb.co/b5fwsDsB/N-50.jpg",
+            "https://i.ibb.co/QvBchJG5/N-51.jpg",
+            "https://i.ibb.co/1GSVPdc1/N-52.jpg",
+            "https://i.ibb.co/GfbZHgwM/N-53.jpg",
+            "https://i.ibb.co/tpWnKRnY/N-54.jpg",
+            "https://i.ibb.co/gFTj0MsT/N-55.jpg",
+            "https://i.ibb.co/HDvpJmr6/N-56.jpg",
+            "https://i.ibb.co/JwjMw3jw/N-57.jpg",
+            "https://i.ibb.co/MxMbjJ7P/Naruto-0057-N-3.jpg",
+            "https://i.ibb.co/G4WPXq3k/Naruto-0058-N-2.jpg",
+            "https://i.ibb.co/gbjPQJhN/Naruto-0059-N-1.jpg"
+        ];
+        
+        let currentIndex = 0;
+        const sliderTrack = document.getElementById('slider-track');
+        const whatsappBtn = document.getElementById('whatsapp-btn');
+        const loading = document.querySelector('.loading');
+        const preloadContainer = document.querySelector('.preload');
+        
+        // Criar slides
+        function createSlides() {
+            images.forEach((imgSrc, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.dataset.index = index;
+                
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.alt = `Placa decorativa ${index + 1}`;
+                
+                slide.appendChild(img);
+                sliderTrack.appendChild(slide);
+                
+                // Posicionar slides verticalmente
+                slide.style.transform = `translateY(${index * 100}%)`;
+            });
+        }
+        
+        // Atualizar posição do slider
+        function updateSliderPosition() {
+            sliderTrack.style.transform = `translateY(-${currentIndex * 100}%)`;
+            
+            // Pré-carregar imagens próximas
+            preloadNextImages();
+        }
+        
+        // Pré-carregar imagens próximas
+        function preloadNextImages() {
+            for (let i = currentIndex + 1; i <= currentIndex + 3; i++) {
+                if (i < images.length) {
+                    const img = new Image();
+                    img.src = images[i];
+                }
+            }
+        }
+        
+        // Navegar para próxima imagem
+        function nextImage() {
+            if (currentIndex < images.length - 1) {
+                currentIndex++;
+                updateSliderPosition();
+            }
+        }
+        
+        // Navegar para imagem anterior
+        function prevImage() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSliderPosition();
+            }
+        }
+        
+        // Inicialização
+        window.onload = function() {
+            createSlides();
+            updateSliderPosition();
+            
+            // Configurar gestos de toque
+            let startY = 0;
+            let isDragging = false;
+            
+            sliderTrack.addEventListener('touchstart', function(e) {
+                startY = e.touches[0].clientY;
+                isDragging = true;
+                sliderTrack.style.transition = 'none';
+            }, { passive: true });
+            
+            sliderTrack.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                
+                const moveY = e.touches[0].clientY;
+                const diffY = moveY - startY;
+                
+                // Mover o slider durante o arrasto
+                sliderTrack.style.transform = `translateY(calc(-${currentIndex * 100}% + ${diffY}px)`;
+            }, { passive: true });
+            
+            sliderTrack.addEventListener('touchend', function(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                
+                const endY = e.changedTouches[0].clientY;
+                const diffY = endY - startY;
+                
+                // Ativar transição suave
+                sliderTrack.style.transition = 'transform 0.5s ease-out';
+                
+                // Determinar se foi um deslize suficiente para mudar de imagem
+                if (diffY < -50 && currentIndex < images.length - 1) {
+                    // Deslizou para cima - próxima imagem
+                    nextImage();
+                } else if (diffY > 50 && currentIndex > 0) {
+                    // Deslizou para baixo - imagem anterior
+                    prevImage();
+                } else {
+                    // Voltar para a posição atual
+                    updateSliderPosition();
+                }
+            }, { passive: true });
+            
+            // Configurar botão do WhatsApp
+            whatsappBtn.addEventListener('click', function() {
+                const whatsappUrl = `https://wa.me/551158588616?text=Olá,%20gostaria%20de%20saber%20mais%20sobre%20esta%20placa:%20${encodeURIComponent(images[currentIndex])}`;
+                window.open(whatsappUrl, '_blank');
+            });
+            
+            // Esconder loading quando a primeira imagem carregar
+            const firstImage = document.querySelector('.slide img');
+            firstImage.onload = function() {
+                loading.style.display = 'none';
+                preloadNextImages();
+            };
+            
+            // Navegação por teclado (para teste em desktop)
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowUp') {
+                    nextImage();
+                } else if (e.key === 'ArrowDown') {
+                    prevImage();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
